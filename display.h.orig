@@ -1,0 +1,471 @@
+extern void uartsend_2bit(vu8 uart, vu8 value1);
+extern void uartsend_3bit_ph(vu8 uart, vu16 value1);
+extern void uartsend_4bit(vu8 uart, vu16 value1);
+extern void LCD_Dis2bit(vu8 Line, vu8 Row, vu8 *sa, vu8 value1);
+extern void LCD_Dis3bit(vu8 Line, vu8 Row, vu8 *sa, vu16 value1);
+extern void LCD_3bit_ph(vu16 value1);
+extern void LCD_2bit(vu8 value1);
+extern void LCD_4bit(vu16 value1);
+extern void LCD_Dis5bit(vu8 Line, vu8 Row, vu8 *sa, vu32 value1);
+vu8 AddFlag = 0;
+extern vu8 hour, min, sec, year, month, date;
+
+vu8 page = 0;
+#include "1302.h"
+vu8 const dis[][20] = {"TH", "DH", "TH", "TH"};
+vu16 const dismax[] = {99, 99, 99, 99};
+void morepage(vu16 pagea, vu16 pageb, vu16 pagec, vu16 paged)
+{
+    vu16 jixian;
+    if ((k3 == 0) || (0)) // 按键按下
+    {
+        delayms(10);                     // 延时10ms
+        if ((k3 == 0)) // 再次确认按键按下
+        {
+        
+            page++;                          // 切换参数
+            if (page > (sizeof(dismax) / 2)) // 参数最多3个
+            {
+                page = 0; // 从第一个开始
+                SysSave();
+            }
+        }
+        while (k3 == 0)
+            ;        // 等待按键松开
+        LCDW_Com(1); // 液晶清除显示
+    }
+    if (page == 0) // 不是显示参数
+    {
+        LCD_Dis2bit(0, 0, "T:", pagea);  // 在指定位置显示数值
+        LCD_Dis2bit(0, 11, "D:", pageb); // 在指定位置显示数值
+        LCD_Dis2bit(1, 0, "P:", pagec);  // 在指定位置显示数值
+        LCD_Dis2bit(1, 11, "Z:", paged); // 在指定位置显示数值
+    }
+    else
+    {
+        LCD_DisStr(0, 0, (u8 *)&dis[page - 1][0]); // 显示sys
+
+        LCDW_Dat(':'); // 显示冒号
+
+        jixian = dismax[page - 1];
+        if ((page == 99) || (page == 98)) // page正常不会为99,这下面只是示例
+
+            LCD_3bit_ph(sys[page - 1]); // 在指定位置显示数值
+        else
+        {
+            if (jixian < 100)
+                LCD_2bit(sys[page - 1]); // 显示数值
+            else if (jixian < 1000)
+                LCD_3bit(sys[page - 1]); // 显示数值
+            else if (jixian < 10000)
+                LCD_4bit(sys[page - 1]); // 显示数值
+            else
+                LCD_5bit(sys[page - 1]); // 显示数值
+        }
+        if ((k1 == 0) ) // 按键按下
+        {
+  
+            sys[page - 1]++;            // 对应参数值+1
+            if (sys[page - 1] > jixian) // 超过99
+                sys[page - 1] = 0;      // 清零
+        }
+        if ((k2 == 0) )
+        {
+          
+            sys[page - 1]--;            // 对应参数值-1
+            if (sys[page - 1] > jixian) // 对应参数0-1=255，所以大于99
+                sys[page - 1] = jixian; // 对应参数设置为99
+        }
+    }
+}
+// display(TempNow,DampNow,&sys[0],&sys[1]);
+void display1(vu16 a1, vu16 *val1h, vu16 max1)
+{
+
+    if (key1 == 0)
+    {
+        (*val1h)++;
+        if ((*val1h) > max1)
+            (*val1h) = 0;
+        STMFLASH_Write(0x8000000 + 30 * 1024, (u16 *)&sys[0], 10);
+    }
+    if (key2 == 0)
+    {
+
+        (*val1h)--;
+        if ((*val1h) > max1)
+            (*val1h) = max1;
+
+        STMFLASH_Write(0x8000000 + 30 * 1024, (u16 *)&sys[0], 10);
+    }
+    LCD_Dis2bit(0, 0, "T:", a1); // 在指定位置显示数值
+
+    LCD_Dis3bit(0, 11, "H:", *(val1h)); // 在指定位置显示数值
+}
+
+#define val1h sys[0]
+#define val2h sys[1]
+
+extern void LCD_Dis4bit(vu8 Line, vu8 Row, vu8 *sa, vu16 value1);
+
+#define saj1_k1 PAin(2)   // 双按键模块的k1脚,要初始化成in
+#define saj1_k2 PAin(2)   // 双按键模块的k2脚,要初始化成in
+vu8 key1838 = 0;          // 1是电源键
+void hx1838Deal(vu8 uart) // 100ms调用这个函数
+{
+
+    vu8 *a1838, *b1838;
+    if (uart == 1)
+    {
+        a1838 = &Uart_RecOk1;
+        b1838 = &Uart_Rx1[0];
+    }
+    else
+    {
+
+        a1838 = &Uart_RecOk2;
+        b1838 = &Uart_Rx2[0];
+    }
+
+    if (*a1838)
+    {
+        *a1838 = 0;
+
+        if ((b1838[0] == 0x66) && (b1838[5] == 0x88))
+        {
+            if (b1838[3] == 0X46) // 电源键
+                key1838 = 1;
+            if (b1838[3] == 0X15) // 向上
+                key1838 = 2;
+
+            if (b1838[3] == 0X18)
+                key1838 = 3;
+        }
+    }
+}
+
+void display2(vu16 a1, vu16 a2)
+{
+
+    if ((keys == 0) || (key1838 == 1))
+    {
+        delayms(10);
+        if ((keys == 0) || (key1838 == 1))
+            AddFlag = 1 - AddFlag;
+        key1838 = 0;
+        while (keys == 0)
+            ;
+    }
+
+    if ((key1 == 0) || (key1838 == 2))
+    {
+        key1838 = 0;
+        if (AddFlag == 0)
+        {
+
+            val1h++;
+            if (val1h > 99)
+                val1h = 0;
+        }
+        else
+        {
+            val1h--;
+            if (val1h > 99)
+                val1h = 99;
+        }
+        SysSave();
+    }
+    if ((key2 == 0) || (key1838 == 3))
+    {
+        key1838 = 0;
+        if (AddFlag == 0)
+        {
+            val2h++;
+            if (val2h > 99)
+                val2h = 0;
+        }
+        else
+        {
+            val2h--;
+            if (val2h > 99)
+                val2h = 99;
+        }
+        SysSave();
+    }
+    LCD_Dis2bit(0, 0, "T:", a1);     // 在指定位置显示数值
+    LCD_Dis2bit(0, 12, "H:", val1h); // 在指定位置显示数值
+    LCD_Dis2bit(1, 0, "D:", a2);     // 在指定位置显示数值
+    LCD_Dis2bit(1, 12, "H:", val2h); // 在指定位置显示数值
+}
+
+/***********************************************************************************************
+函数名:	 往1602写数据
+输入参数:dat:数据
+输出:无
+说明:无
+***********************************************************************************************/
+void OLEDW_Dat(vu8 uart, vu8 dat)
+{
+    sendchar(uart, dat);
+}
+#include "oled_i2c.h"
+
+vu8 const disoled[][20] = {"TH", "DH", "CO2H"};
+vu16 const dismaxoled[] = {99, 99, 99};
+void morepage_oled(vu16 pagea, vu16 pageb, vu16 pagec, vu16 paged)
+{
+    vu16 jixian, len, i;
+    delayms(50);
+    if (k3 == 0) // 按键按下
+    {
+        delayms(10); // 延时10ms
+        if (k3 == 0) // 再次确认按键按下
+        {
+            page++;                              // 切换参数
+            if (page > (sizeof(dismaxoled) / 2)) // 参数最多3个
+                page = 0;                        // 从第一个开始
+        }
+        while (k3 == 0)
+            ;          // 等待按键松开
+        if (page == 0) // 只需要清第一行
+        {
+            OLED_DisStr(0, 0, "                \r\n");
+        }
+        else if (page == 1) // 第一行不需要清,它会自动补齐后面空格
+        {
+            OLED_DisStr(1, 0, "                \r\n");
+            OLED_DisStr(2, 0, "                \r\n");
+            OLED_DisStr(3, 0, "                \r\n");
+        }
+    }
+    if (page == 0) // 不是显示参数
+    {
+
+        OLED_DisStr(0, 0, "T:"); // 串口1,2行,1列
+        OLED_2bit(pagea);
+
+        OLED_DisStr(1, 0, "D:"); // 串口1,2行,1列
+        OLED_2bit(pageb);
+
+        OLED_DisStr(2, 0, "H:"); // 串口1,2行,1列
+        OLED_2bit(pagec);
+
+        OLED_DisStr(3, 0, "N:"); // 串口1,2行,1列
+        OLED_2bit(paged);
+
+        OLED_DisStr(2, 0, "Rt:"); // 串口1,2行,1列
+        OLED_str("yes");
+
+        OLED_DisStr(3, 0, "PH>"); // 串口1,2行,1列
+        OLED_3bit_ph(pagec);      // 往指定串口发送参数
+
+        /*下面显示其他行的信息,放在这边看起来比较清楚,别在设置界面时候再显示这些行,很乱*/
+    }
+    else
+    {
+
+        OLED_DisStr(0, 0, (u8 *)&disoled[page - 1][0]); // 显示sys
+        len = strlen((const char *)&disoled[page - 1][0]);
+        OLED_str(":"); // 显示冒号
+        len++;
+        jixian = dismaxoled[page - 1];
+        if ((page == 99) || (page == 98)) // page正常不会为99,这下面只是示例
+        {
+            OLED_3bit_ph(sys[page - 1]); // 往指定串口发送参数
+        }
+
+        else
+        {
+
+            if (jixian < 100)
+
+                OLED_2bit(sys[page - 1]); // 显示数值
+
+            else if (jixian < 1000)
+                OLED_3bit(sys[page - 1]); // 显示数值
+            else if (jixian < 10000)
+                OLED_4bit(sys[page - 1]); // 显示数值
+            else
+                OLED_5bit(sys[page - 1]); // 显示数值
+        }
+
+        for (i = len; i < 16; i++)
+            OLED_str(" ");
+
+        if (k1 == 0) // 按键按下
+        {
+            sys[page - 1]++;            // 对应参数值+1
+            if (sys[page - 1] > jixian) // 超过99
+                sys[page - 1] = 0;      // 清零
+            SysSave();
+        }
+        if (k2 == 0)
+        {
+            sys[page - 1]--;            // 对应参数值-1
+            if (sys[page - 1] > jixian) // 对应参数0-1=255，所以大于99
+                sys[page - 1] = jixian; // 对应参数设置为99
+            SysSave();
+        }
+    }
+    OLED_Refresh(); // 刷新一次屏幕,不然不显示
+}
+void OLED_DisStra(vu8 uart, u8 Line, u8 Row, u8 *Dat)
+{
+    vu8 oleda;
+    if (Line == 0)
+        sendstr(uart, "h0 l0=");
+    if (Line == 1)
+        sendstr(uart, "h1 l1=");
+    if (Line == 2)
+        sendstr(uart, "h2 l2=");
+    if (Line == 3)
+        sendstr(uart, "h3 l3=");
+    oleda = Row * 8;
+    sendchar(uart, oleda / 10 + 48);
+    sendchar(uart, oleda % 10 + 48);
+    if (Line == 0)
+        sendstr(uart, " oled0=");
+    if (Line == 1)
+        sendstr(uart, " oled1=");
+    if (Line == 2)
+        sendstr(uart, " oled2=");
+    if (Line == 3)
+        sendstr(uart, " oled3=");
+    sendstr(uart, Dat);
+}
+
+vu8 b1[]= {0xCA,0xAA,0xB6,0xC8,0xB5,0xCD,0};//"湿度低"
+vu8 b2[]= {0xB9,0xE2,0xD5,0xD5,0xB5,0xCD,0};// "光照低"
+vu8 b3[]= {0xB5,0xAA,0xB5,0xCD,0};
+vu8 b4[]= {0xC1,0xD7,0xB5,0xCD,0};
+vu8 b5[]= {0xBC,0xD8,0xB5,0xCD,0};
+vu8 b6[]= {0xCA,0xB1,0xBC,0xE4,0};// "光照低", "氮低  ", "磷低  ", "钾低  ", "时间  "
+
+vu8 a1[]={0XCA ,0XAA ,0XB6 ,0XC8 ,0X3A,0};
+vu8 a2[]={0XB9 ,0XE2 ,0XD5 ,0XD5 ,0X3A,0};
+vu8 a3[]={0XB5 ,0XAA ,0X3A,0};
+vu8 a4[]={0x20,0x20,0x20,0x20,0XC1 ,0XD7 ,0X3A,0};
+vu8 a5[]={0XBC ,0XD8 ,0X3A,0};
+
+vu8 a6[]={0X20,0X20,0X20,0X20,0X20,0X20,0X20,0X20,0X20,0X20,0X20,0X20,0X20,0X20,0X20,0X20,13,10};
+
+void morepage_oled_china(vu16 pagea, vu16 pageb, vu16 pagec, vu16 paged)
+{
+    vu16 jixian, len, i;
+    delayms(50);
+    if (k3 == 0) // 按键按下
+    {
+        delayms(10); // 延时10ms
+        if (k3 == 0) // 再次确认按键按下
+        {
+            page++;       // 切换参数
+            if (page > 3) // 参数最多3个
+                page = 0; // 从第一个开始
+        }
+        while (k3 == 0)
+            ;          // 等待按键松开
+        if (page == 0) // 只需要清第一行
+        {
+            OLED_DisStra(oleduart, 0, 0, "                \r\n");
+        }
+        else if (page == 1) // 第一行不需要清,它会自动补齐后面空格
+        {
+            OLED_DisStra(oleduart, 1, 0, "                \r\n");
+            OLED_DisStra(oleduart, 2, 0, "                \r\n");
+            OLED_DisStra(oleduart, 3, 0, "                \r\n");
+        }
+    }
+    if (page == 0) // 不是显示参数
+    {
+
+       OLED_DisStra(oleduart, 0, 0, a1); // 串口1,2行,1列
+        uartsend_2bit(oleduart, pagea);        // 往指定串口发送参数
+			sendstr(1,"%");
+        sendstr(1,a2);
+//        OLED_DisStra(oleduart, 0, 5, a2); // 串口1,2行,1列
+        uartsend_2bit(oleduart, pageb);        // 往指定串口发送参数
+						sendstr(1,"%");
+        sendstr(oleduart, "\r\n");
+
+        OLED_DisStra(oleduart, 1, 0, a3); // 串口1,2行,1列
+        uartsend_2bit(oleduart, pagec);      // 往指定串口发送参数
+        sendstr(1,"%");
+            sendstr(1,a4);
+        uartsend_2bit(oleduart, paged);      // 往指定串口发送参数
+						sendstr(1,"%");
+        sendstr(oleduart, "\r\n");
+        OLED_DisStra(oleduart, 2, 0, a5); // 串口1,2行,1列
+        uartsend_2bit(oleduart, pagee);      // 往指定串口发送参数
+						sendstr(1,"%");
+        sendstr(oleduart, "\r\n");
+        /*下面显示其他行的信息,放在这边看起来比较清楚,别在设置界面时候再显示这些行,很乱*/
+    }
+    else
+    {
+
+	if(page==1)
+			{
+			 OLED_DisStra(oleduart, 0, 0, b1);
+len=6;				
+			}
+     			if(page==2)
+			{
+			 OLED_DisStra(oleduart, 0, 0, b2);
+len=6;				
+			}
+						if(page==3)
+			{
+			 OLED_DisStra(oleduart, 0, 0, b3);
+len=4;				
+			}
+						if(page==4)
+			{
+			 OLED_DisStra(oleduart, 0, 0, b4);
+len=4;				
+			}
+						if(page==5)
+			{
+			 OLED_DisStra(oleduart, 0, 0, b5);
+len=4;				
+			}
+						if(page==6)
+			{
+			 OLED_DisStra(oleduart, 0, 0, b6);
+len=4;				
+			}
+        sendchar(oleduart, ':'); // 显示冒号
+        len++;
+        if (page == 98) // page正常不会为99,这下面只是示例
+        {
+            uartsend_3bit_ph(oleduart, sys[page - 1]); // 往指定串口发送参数
+
+            jixian = 216;
+            len += 4;
+        }
+
+        else
+        {
+            uartsend_2bit(oleduart, sys[page - 1]); // 往指定串口发送参数
+
+            len += 2;
+            jixian = 99;
+        }
+        for (i = len; i < 16; i++)
+            sendchar(oleduart, ' ');
+        sendstr(oleduart, "\r\n");
+        if (k1 == 0) // 按键按下
+        {
+            sys[page - 1]++;            // 对应参数值+1
+            if (sys[page - 1] > jixian) // 超过99
+                sys[page - 1] = 0;      // 清零
+            SysSave();
+        }
+        if (k2 == 0)
+        {
+            sys[page - 1]--;            // 对应参数值-1
+            if (sys[page - 1] > jixian) // 对应参数0-1=255，所以大于99
+                sys[page - 1] = jixian; // 对应参数设置为99
+            SysSave();
+        }
+    }
+}

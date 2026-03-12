@@ -1,0 +1,151 @@
+Dependencies for Project 'stm32', Target 'GPIO': (DO NOT MODIFY !)
+F (.\Source\Startup\cortexm3_macro.s)(0x5A467FB8)(--cpu Cortex-M3 -g --apcs=interwork --pd "__MICROLIB SETA 1" -I d:\Keil\ARM\RV31\INC -I d:\Keil\ARM\CMSIS\Include -I d:\Keil\ARM\Inc\ST\STM32F10x --list ".\List\cortexm3_macro.lst" --xref -o ".\Obj\cortexm3_macro.o" --depend ".\Obj\cortexm3_macro.d")
+F (.\Source\Startup\stm32f10x_vector.s)(0x5A467FBF)(--cpu Cortex-M3 -g --apcs=interwork --pd "__MICROLIB SETA 1" -I d:\Keil\ARM\RV31\INC -I d:\Keil\ARM\CMSIS\Include -I d:\Keil\ARM\Inc\ST\STM32F10x --list ".\List\stm32f10x_vector.lst" --xref -o ".\Obj\stm32f10x_vector.o" --depend ".\Obj\stm32f10x_vector.d")
+F (.\Source\stm32f10x_it.c)(0x5A466119)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork -I.\Source\FWLib\inc -I.\Source\FWLib\src -I.\Source\Startup -I.\Source -I..\¡¾A¡¿LEDÑ­»·ÉÁ¶¯ -I..\stm32ÃÜÂëËø -I.\Source -I d:\Keil\ARM\RV31\INC -I d:\Keil\ARM\CMSIS\Include -I d:\Keil\ARM\Inc\ST\STM32F10x -o ".\Obj\stm32f10x_it.o" --omf_browse ".\Obj\stm32f10x_it.crf" --depend ".\Obj\stm32f10x_it.d")
+I (Source\stm32f10x_it.h)(0x4A0284CE)
+I (.\Source\FWLib\inc\stm32f10x_lib.h)(0x48D84430)
+I (.\Source\FWLib\inc\stm32f10x_map.h)(0x4F5EB248)
+I (.\Source\stm32f10x_conf.h)(0x5A466042)
+I (.\Source\FWLib\inc\stm32f10x_type.h)(0x48D84430)
+I (.\Source\FWLib\inc\cortexm3_macro.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_adc.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_bkp.h)(0x48D84430)
+I (.\Source\FWLib\inc\stm32f10x_flash.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_gpio.h)(0x459839C6)
+I (.\Source\FWLib\inc\stm32f10x_nvic.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_pwr.h)(0x48D84430)
+I (.\Source\FWLib\inc\stm32f10x_rcc.h)(0x48D84430)
+I (.\Source\FWLib\inc\stm32f10x_rtc.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_systick.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_tim.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_usart.h)(0x48D84432)
+F (.\Source\main.c)(0x5E59CDA8)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork -I.\Source\FWLib\inc -I.\Source\FWLib\src -I.\Source\Startup -I.\Source -I..\¡¾A¡¿LEDÑ­»·ÉÁ¶¯ -I..\stm32ÃÜÂëËø -I.\Source -I d:\Keil\ARM\RV31\INC -I d:\Keil\ARM\CMSIS\Include -I d:\Keil\ARM\Inc\ST\STM32F10x -o ".\Obj\main.o" --omf_browse ".\Obj\main.crf" --depend ".\Obj\main.d")
+I (.\Source\FWLib\inc\stm32f10x_lib.h)(0x48D84430)
+I (.\Source\FWLib\inc\stm32f10x_map.h)(0x4F5EB248)
+I (.\Source\stm32f10x_conf.h)(0x5A466042)
+I (.\Source\FWLib\inc\stm32f10x_type.h)(0x48D84430)
+I (.\Source\FWLib\inc\cortexm3_macro.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_adc.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_bkp.h)(0x48D84430)
+I (.\Source\FWLib\inc\stm32f10x_flash.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_gpio.h)(0x459839C6)
+I (.\Source\FWLib\inc\stm32f10x_nvic.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_pwr.h)(0x48D84430)
+I (.\Source\FWLib\inc\stm32f10x_rcc.h)(0x48D84430)
+I (.\Source\FWLib\inc\stm32f10x_rtc.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_systick.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_tim.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_usart.h)(0x48D84432)
+I (Source\platform_config.h)(0x4A0284CE)
+I (Source\include.h)(0x5A466096)
+I (Source\stmflash.h)(0x5B310E9A)
+I (Source\delay.h)(0x5E59CC68)
+I (Source\rtc.h)(0x5A4660E2)
+I (Source\1602.h)(0x5E59CCE7)
+I (Source\Uart.h)(0x5C9ADAC2)
+I (Source\dht11.h)(0x5C9980AB)
+I (Source\gps.h)(0x5B310979)
+I (d:\Keil\ARM\ARMCC\bin\..\include\stdlib.h)(0x4EB0D284)
+I (d:\Keil\ARM\ARMCC\bin\..\include\stdio.h)(0x4EB0D286)
+I (d:\Keil\ARM\ARMCC\bin\..\include\string.h)(0x5C259749)
+I (d:\Keil\ARM\ARMCC\bin\..\include\math.h)(0x4EB0D288)
+I (Source\jd8400.h)(0x5C99811B)
+I (Source\chaoshengbo.h)(0x5C0DBEB2)
+I (Source\display.h)(0x5C998106)
+F (.\Source\delay.h)(0x5E59CC68)()
+F (.\Source\adc.h)(0x5A697327)()
+F (.\Source\Uart.h)(0x5C9ADAC2)()
+F (.\Source\motor.h)(0x5C0DBE4C)()
+F (.\Source\dht11.h)(0x5C9980AB)()
+F (.\Source\gps.h)(0x5B310979)()
+F (.\Source\FWLib\src\stm32f10x_flash.c)(0x48D844A0)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork -I.\Source\FWLib\inc -I.\Source\FWLib\src -I.\Source\Startup -I.\Source -I..\¡¾A¡¿LEDÑ­»·ÉÁ¶¯ -I..\stm32ÃÜÂëËø -I.\Source -I d:\Keil\ARM\RV31\INC -I d:\Keil\ARM\CMSIS\Include -I d:\Keil\ARM\Inc\ST\STM32F10x -o ".\Obj\stm32f10x_flash.o" --omf_browse ".\Obj\stm32f10x_flash.crf" --depend ".\Obj\stm32f10x_flash.d")
+I (.\Source\FWLib\inc\stm32f10x_flash.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_map.h)(0x4F5EB248)
+I (.\Source\stm32f10x_conf.h)(0x5A466042)
+I (.\Source\FWLib\inc\stm32f10x_type.h)(0x48D84430)
+I (.\Source\FWLib\inc\cortexm3_macro.h)(0x48D84432)
+F (.\Source\FWLib\src\stm32f10x_gpio.c)(0x5380F646)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork -I.\Source\FWLib\inc -I.\Source\FWLib\src -I.\Source\Startup -I.\Source -I..\¡¾A¡¿LEDÑ­»·ÉÁ¶¯ -I..\stm32ÃÜÂëËø -I.\Source -I d:\Keil\ARM\RV31\INC -I d:\Keil\ARM\CMSIS\Include -I d:\Keil\ARM\Inc\ST\STM32F10x -o ".\Obj\stm32f10x_gpio.o" --omf_browse ".\Obj\stm32f10x_gpio.crf" --depend ".\Obj\stm32f10x_gpio.d")
+I (.\Source\FWLib\inc\stm32f10x_gpio.h)(0x459839C6)
+I (.\Source\FWLib\inc\stm32f10x_map.h)(0x4F5EB248)
+I (.\Source\stm32f10x_conf.h)(0x5A466042)
+I (.\Source\FWLib\inc\stm32f10x_type.h)(0x48D84430)
+I (.\Source\FWLib\inc\cortexm3_macro.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_rcc.h)(0x48D84430)
+F (.\Source\FWLib\src\stm32f10x_nvic.c)(0x48D844A0)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork -I.\Source\FWLib\inc -I.\Source\FWLib\src -I.\Source\Startup -I.\Source -I..\¡¾A¡¿LEDÑ­»·ÉÁ¶¯ -I..\stm32ÃÜÂëËø -I.\Source -I d:\Keil\ARM\RV31\INC -I d:\Keil\ARM\CMSIS\Include -I d:\Keil\ARM\Inc\ST\STM32F10x -o ".\Obj\stm32f10x_nvic.o" --omf_browse ".\Obj\stm32f10x_nvic.crf" --depend ".\Obj\stm32f10x_nvic.d")
+I (.\Source\FWLib\inc\stm32f10x_nvic.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_map.h)(0x4F5EB248)
+I (.\Source\stm32f10x_conf.h)(0x5A466042)
+I (.\Source\FWLib\inc\stm32f10x_type.h)(0x48D84430)
+I (.\Source\FWLib\inc\cortexm3_macro.h)(0x48D84432)
+F (.\Source\FWLib\src\stm32f10x_rcc.c)(0x48D844A0)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork -I.\Source\FWLib\inc -I.\Source\FWLib\src -I.\Source\Startup -I.\Source -I..\¡¾A¡¿LEDÑ­»·ÉÁ¶¯ -I..\stm32ÃÜÂëËø -I.\Source -I d:\Keil\ARM\RV31\INC -I d:\Keil\ARM\CMSIS\Include -I d:\Keil\ARM\Inc\ST\STM32F10x -o ".\Obj\stm32f10x_rcc.o" --omf_browse ".\Obj\stm32f10x_rcc.crf" --depend ".\Obj\stm32f10x_rcc.d")
+I (.\Source\FWLib\inc\stm32f10x_rcc.h)(0x48D84430)
+I (.\Source\FWLib\inc\stm32f10x_map.h)(0x4F5EB248)
+I (.\Source\stm32f10x_conf.h)(0x5A466042)
+I (.\Source\FWLib\inc\stm32f10x_type.h)(0x48D84430)
+I (.\Source\FWLib\inc\cortexm3_macro.h)(0x48D84432)
+F (.\Source\FWLib\src\stm32f10x_tim.c)(0x48D844A0)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork -I.\Source\FWLib\inc -I.\Source\FWLib\src -I.\Source\Startup -I.\Source -I..\¡¾A¡¿LEDÑ­»·ÉÁ¶¯ -I..\stm32ÃÜÂëËø -I.\Source -I d:\Keil\ARM\RV31\INC -I d:\Keil\ARM\CMSIS\Include -I d:\Keil\ARM\Inc\ST\STM32F10x -o ".\Obj\stm32f10x_tim.o" --omf_browse ".\Obj\stm32f10x_tim.crf" --depend ".\Obj\stm32f10x_tim.d")
+I (.\Source\FWLib\inc\stm32f10x_tim.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_map.h)(0x4F5EB248)
+I (.\Source\stm32f10x_conf.h)(0x5A466042)
+I (.\Source\FWLib\inc\stm32f10x_type.h)(0x48D84430)
+I (.\Source\FWLib\inc\cortexm3_macro.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_rcc.h)(0x48D84430)
+F (.\Source\FWLib\src\stm32f10x_systick.c)(0x48D844A0)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork -I.\Source\FWLib\inc -I.\Source\FWLib\src -I.\Source\Startup -I.\Source -I..\¡¾A¡¿LEDÑ­»·ÉÁ¶¯ -I..\stm32ÃÜÂëËø -I.\Source -I d:\Keil\ARM\RV31\INC -I d:\Keil\ARM\CMSIS\Include -I d:\Keil\ARM\Inc\ST\STM32F10x -o ".\Obj\stm32f10x_systick.o" --omf_browse ".\Obj\stm32f10x_systick.crf" --depend ".\Obj\stm32f10x_systick.d")
+I (.\Source\FWLib\inc\stm32f10x_systick.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_map.h)(0x4F5EB248)
+I (.\Source\stm32f10x_conf.h)(0x5A466042)
+I (.\Source\FWLib\inc\stm32f10x_type.h)(0x48D84430)
+I (.\Source\FWLib\inc\cortexm3_macro.h)(0x48D84432)
+F (.\Source\FWLib\src\stm32f10x_usart.c)(0x48D844A0)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork -I.\Source\FWLib\inc -I.\Source\FWLib\src -I.\Source\Startup -I.\Source -I..\¡¾A¡¿LEDÑ­»·ÉÁ¶¯ -I..\stm32ÃÜÂëËø -I.\Source -I d:\Keil\ARM\RV31\INC -I d:\Keil\ARM\CMSIS\Include -I d:\Keil\ARM\Inc\ST\STM32F10x -o ".\Obj\stm32f10x_usart.o" --omf_browse ".\Obj\stm32f10x_usart.crf" --depend ".\Obj\stm32f10x_usart.d")
+I (.\Source\FWLib\inc\stm32f10x_usart.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_map.h)(0x4F5EB248)
+I (.\Source\stm32f10x_conf.h)(0x5A466042)
+I (.\Source\FWLib\inc\stm32f10x_type.h)(0x48D84430)
+I (.\Source\FWLib\inc\cortexm3_macro.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_rcc.h)(0x48D84430)
+F (.\Source\FWLib\src\stm32f10x_adc.c)(0x48D844A0)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork -I.\Source\FWLib\inc -I.\Source\FWLib\src -I.\Source\Startup -I.\Source -I..\¡¾A¡¿LEDÑ­»·ÉÁ¶¯ -I..\stm32ÃÜÂëËø -I.\Source -I d:\Keil\ARM\RV31\INC -I d:\Keil\ARM\CMSIS\Include -I d:\Keil\ARM\Inc\ST\STM32F10x -o ".\Obj\stm32f10x_adc.o" --omf_browse ".\Obj\stm32f10x_adc.crf" --depend ".\Obj\stm32f10x_adc.d")
+I (.\Source\FWLib\inc\stm32f10x_adc.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_map.h)(0x4F5EB248)
+I (.\Source\stm32f10x_conf.h)(0x5A466042)
+I (.\Source\FWLib\inc\stm32f10x_type.h)(0x48D84430)
+I (.\Source\FWLib\inc\cortexm3_macro.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_rcc.h)(0x48D84430)
+F (.\Source\FWLib\src\stm32f10x_rtc.c)(0x48D844A0)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork -I.\Source\FWLib\inc -I.\Source\FWLib\src -I.\Source\Startup -I.\Source -I..\¡¾A¡¿LEDÑ­»·ÉÁ¶¯ -I..\stm32ÃÜÂëËø -I.\Source -I d:\Keil\ARM\RV31\INC -I d:\Keil\ARM\CMSIS\Include -I d:\Keil\ARM\Inc\ST\STM32F10x -o ".\Obj\stm32f10x_rtc.o" --omf_browse ".\Obj\stm32f10x_rtc.crf" --depend ".\Obj\stm32f10x_rtc.d")
+I (.\Source\FWLib\inc\stm32f10x_rtc.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_map.h)(0x4F5EB248)
+I (.\Source\stm32f10x_conf.h)(0x5A466042)
+I (.\Source\FWLib\inc\stm32f10x_type.h)(0x48D84430)
+I (.\Source\FWLib\inc\cortexm3_macro.h)(0x48D84432)
+F (.\Source\FWLib\src\stm32f10x_bkp.c)(0x48D844A0)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork -I.\Source\FWLib\inc -I.\Source\FWLib\src -I.\Source\Startup -I.\Source -I..\¡¾A¡¿LEDÑ­»·ÉÁ¶¯ -I..\stm32ÃÜÂëËø -I.\Source -I d:\Keil\ARM\RV31\INC -I d:\Keil\ARM\CMSIS\Include -I d:\Keil\ARM\Inc\ST\STM32F10x -o ".\Obj\stm32f10x_bkp.o" --omf_browse ".\Obj\stm32f10x_bkp.crf" --depend ".\Obj\stm32f10x_bkp.d")
+I (.\Source\FWLib\inc\stm32f10x_bkp.h)(0x48D84430)
+I (.\Source\FWLib\inc\stm32f10x_map.h)(0x4F5EB248)
+I (.\Source\stm32f10x_conf.h)(0x5A466042)
+I (.\Source\FWLib\inc\stm32f10x_type.h)(0x48D84430)
+I (.\Source\FWLib\inc\cortexm3_macro.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_rcc.h)(0x48D84430)
+F (.\Source\FWLib\src\stm32f10x_pwr.c)(0x48D844A0)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork -I.\Source\FWLib\inc -I.\Source\FWLib\src -I.\Source\Startup -I.\Source -I..\¡¾A¡¿LEDÑ­»·ÉÁ¶¯ -I..\stm32ÃÜÂëËø -I.\Source -I d:\Keil\ARM\RV31\INC -I d:\Keil\ARM\CMSIS\Include -I d:\Keil\ARM\Inc\ST\STM32F10x -o ".\Obj\stm32f10x_pwr.o" --omf_browse ".\Obj\stm32f10x_pwr.crf" --depend ".\Obj\stm32f10x_pwr.d")
+I (.\Source\FWLib\inc\stm32f10x_pwr.h)(0x48D84430)
+I (.\Source\FWLib\inc\stm32f10x_map.h)(0x4F5EB248)
+I (.\Source\stm32f10x_conf.h)(0x5A466042)
+I (.\Source\FWLib\inc\stm32f10x_type.h)(0x48D84430)
+I (.\Source\FWLib\inc\cortexm3_macro.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_rcc.h)(0x48D84430)
+F (.\stmflash.c)(0x5471DFC6)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork -I.\Source\FWLib\inc -I.\Source\FWLib\src -I.\Source\Startup -I.\Source -I..\¡¾A¡¿LEDÑ­»·ÉÁ¶¯ -I..\stm32ÃÜÂëËø -I.\Source -I d:\Keil\ARM\RV31\INC -I d:\Keil\ARM\CMSIS\Include -I d:\Keil\ARM\Inc\ST\STM32F10x -o ".\Obj\stmflash.o" --omf_browse ".\Obj\stmflash.crf" --depend ".\Obj\stmflash.d")
+I (.\Source\stmflash.h)(0x5B310E9A)
+I (.\Source\FWLib\inc\stm32f10x_lib.h)(0x48D84430)
+I (.\Source\FWLib\inc\stm32f10x_map.h)(0x4F5EB248)
+I (.\Source\stm32f10x_conf.h)(0x5A466042)
+I (.\Source\FWLib\inc\stm32f10x_type.h)(0x48D84430)
+I (.\Source\FWLib\inc\cortexm3_macro.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_adc.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_bkp.h)(0x48D84430)
+I (.\Source\FWLib\inc\stm32f10x_flash.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_gpio.h)(0x459839C6)
+I (.\Source\FWLib\inc\stm32f10x_nvic.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_pwr.h)(0x48D84430)
+I (.\Source\FWLib\inc\stm32f10x_rcc.h)(0x48D84430)
+I (.\Source\FWLib\inc\stm32f10x_rtc.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_systick.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_tim.h)(0x48D84432)
+I (.\Source\FWLib\inc\stm32f10x_usart.h)(0x48D84432)
+F (.\stmflash.h)(0x00000000)()
