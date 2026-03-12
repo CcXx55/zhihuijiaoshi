@@ -1,0 +1,33 @@
+.mui-input-group label {
+	width: 30%;
+}
+.mui-input-row label~input,
+.mui-input-row label~select,
+.mui-input-row label~textarea {
+	width: 70%;
+}
+
+.mui-input-row button {
+	width: 20%;
+}
+
+.mui-input-group:first-child {
+				margin-top: 20px;
+			}
+.mui-checkbox input[type=checkbox],
+.mui-radio input[type=radio] {
+	
+	top: 6px;
+}
+.mui-content-padded {
+	margin-top: 25px;
+}
+.mui-btn {
+	padding: 10px;
+}
+
+.fonts{
+	font-size: 5px 
+}
+
+
