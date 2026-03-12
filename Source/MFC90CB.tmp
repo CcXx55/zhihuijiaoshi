@@ -1,0 +1,360 @@
+/* Includes ------------------------------------------------------------------*/
+#include "stm32f10x_lib.h"
+
+#define PIN_LED_Fac PBout(9)
+#define PIN_LED_Warn PBout(8)
+#define Key PAin(8)
+#define KeyA PBin(9)
+#define KeyU PBin(8)
+#define Beep PBout(12)
+vu8 UartRx[100],UartTx[100]={0x58};
+vu16 RecCnt;
+vu16 RecTimeCount;
+vu8 UartRecInit=0,Uart_RecOk=0,UartFlag_RecTime=0;
+
+
+#include "platform_config.h"
+
+#include "include.h"
+#include "stmflash.h"
+#include "delay.h"
+
+#include "rtc.h"
+//#include "1602.h"
+//#include "18B20.h"//需要什么功能加什么头文件,不需要把头文件删掉就行
+//#include "keyboard.h"
+//#include "1602.h"
+#include "Uart.h"
+//#include "dht11.h"
+#include "adc.h"
+#include "nrf24l01.h"
+#include "mpu6050.h"
+
+ErrorStatus HSEStartUpStatus;
+/*******************************************************************************
+* Function Name  : RCC_Configuration
+* Description    : Configures the different system clocks.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void RCC_Configuration(void)
+{   
+  /* RCC system reset(for debug purpose) */
+  RCC_DeInit();
+
+  /* Enable HSE */
+  RCC_HSEConfig(RCC_HSE_ON);
+
+  /* Wait till HSE is ready */
+  HSEStartUpStatus = RCC_WaitForHSEStartUp();
+
+  if(HSEStartUpStatus == SUCCESS)
+  {
+    /* Enable Prefetch Buffer */
+    FLASH_PrefetchBufferCmd(FLASH_PrefetchBuffer_Enable);
+
+    /* Flash 2 wait state */
+    FLASH_SetLatency(FLASH_Latency_2);
+ 	
+    /* HCLK = SYSCLK */
+    RCC_HCLKConfig(RCC_SYSCLK_Div1); 
+  
+    /* PCLK2 = HCLK */
+    RCC_PCLK2Config(RCC_HCLK_Div1); 
+
+    /* PCLK1 = HCLK/2 */
+    RCC_PCLK1Config(RCC_HCLK_Div2);
+
+    /* PLLCLK = 8MHz * 9 = 72 MHz */
+    RCC_PLLConfig(RCC_PLLSource_HSE_Div1, RCC_PLLMul_9);
+
+    /* Enable PLL */ 
+    RCC_PLLCmd(ENABLE);
+
+    /* Wait till PLL is ready */
+    while(RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET)
+    {
+    }
+
+    /* Select PLL as system clock source */
+    RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
+
+    /* Wait till PLL is used as system clock source */
+    while(RCC_GetSYSCLKSource() != 0x08)
+    {
+    }
+  }
+}
+
+/*******************************************************************************
+* Function Name  : NVIC_Configuration
+* Description    : Configures Vector Table base location.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void NVIC_Configuration(void)
+{
+#ifdef  VECT_TAB_RAM  
+  /* Set the Vector Table base location at 0x20000000 */ 
+  NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0); 
+#else  /* VECT_TAB_FLASH  */
+  /* Set the Vector Table base location at 0x08000000 */ 
+  NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);   
+#endif
+}
+
+/*******************************************************************************
+* Function Name  : Delay
+* Description    : Inserts a delay time.
+* Input          : nCount: specifies the delay time length.
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void Delay(vu32 nCount)
+{
+  for(; nCount != 0; nCount--);
+}
+
+#ifdef  DEBUG
+/*******************************************************************************
+* Function Name  : assert_failed
+* Description    : Reports the name of the source file and the source line number
+*                  where the assert_param error has occurred.
+* Input          : - file: pointer to the source file name
+*                  - line: assert_param error line source number
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void assert_failed(u8* file, u32 line)
+{ 
+  /* User can add his own implementation to report the file name and line number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+
+  /* Infinite loop */
+  while (1)
+  {
+  }
+}
+#endif		     
+
+/********************************************************************************************
+*函数名称：void TimCounterInit(void)
+*
+*入口参数：DelayMS=N,则定时时间为N毫秒
+*
+*出口参数：无
+*
+*功能说明：定时时间= TIM_COUNTER*TIM_PSC/72000000(单位为秒)
+*******************************************************************************************/
+void Tim1_Init(vu16 DelayMS)
+{
+	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+  	NVIC_InitTypeDef NVIC_InitStructure;
+	vu16 TIM_COUNTER=2*DelayMS;					  //计数个数							
+	vu16 TIM_PSC=36000;					  //分频系数	
+	
+
+	/* TIM时钟使能 */
+    if ((TIM == TIM1) || (TIM == TIM8))
+	    RCC_APB2PeriphClockCmd(RCC_APB_TIM, ENABLE);
+    else if((TIM == TIM2) || (TIM == TIM3) || (TIM == TIM4) || (TIM == TIM5))
+	    RCC_APB1PeriphClockCmd(RCC_APB_TIM, ENABLE);
+
+	/* 基定时器初始化 */
+	TIM_TimeBaseStructure.TIM_Period = TIM_COUNTER;				//计数值
+	TIM_TimeBaseStructure.TIM_Prescaler = TIM_PSC;				//分频系数		 
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0;				//时钟分割：寄存器（技术）手册基定时器未讲到。
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;	//计数模式
+	TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;			//重复计数值
+	
+	TIM_TimeBaseInit(TIM, &TIM_TimeBaseStructure);				//初始化TIM
+	
+	TIM_ITConfig(TIM,TIM_IT_Update,ENABLE);						//打开 更新事件 中断
+	TIM_Cmd(TIM, ENABLE);										//使能TIM
+
+	/* 使能TIM中断 */
+	if(TIM == TIM1)
+	  NVIC_InitStructure.NVIC_IRQChannel = 25;
+	else if(TIM == TIM2)
+	  NVIC_InitStructure.NVIC_IRQChannel = 28;
+	
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	
+	NVIC_Init(&NVIC_InitStructure);
+}
+
+
+void GPIOO_Init(void)
+{
+   GPIO_InitTypeDef GPIO_InitStructure;
+	//按键初始化
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_5;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	PAin(2)=1;
+	PAin(8)=1;
+    PAin(5)=1;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);	
+	PBout(8)=1;
+	PBout(9)=1;
+	PBout(12)=1;
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);	
+}
+
+
+
+#define LED1 PBout(8)
+#define LED2 PBout(9)
+
+//先6050板子上电,然后再自己板子
+int main(void)
+{
+    vu16 i,j=0;
+
+
+	RCC_Configuration();   
+ 
+	NVIC_Configuration();
+
+    delay_init(72);
+    
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOB|RCC_APB2Periph_GPIOC, ENABLE);
+    UARTT_Init(USART1,9600);
+	GPIOO_Init();
+	nrf24l01_init();
+
+
+    i=SPI_Read(EN_AA);
+	RX_Mode();
+	//这边发射,对方没问题
+	while(1)
+	{
+		  //		MpuGetData();
+        TX_BUF[0]='L';
+        TX_BUF[1]=accelStruct.accelX;
+        TX_BUF[2]=accelStruct.accelY;
+        TX_BUF[3]=accelStruct.accelZ;
+        TX_BUF[4]=gyroStruct.gyroX;
+        TX_BUF[5]=gyroStruct.gyroY;
+        TX_BUF[6]=gyroStruct.gyroZ;
+        TX_BUF[7]='E';
+        TX_BUF[8]=0;
+//		if(Uart_RecOk)
+//		{
+//			
+			TX_BUF[0]='L';
+			TX_BUF[1]='S';
+			TX_BUF[2]='Z';
+			TX_BUF[3]=0;//步
+			TX_Mode(TX_BUF);
+
+			LED1=~LED1;
+			delay_ms(366);
+			RX_Mode();
+			delay_ms(1000);
+////		}
+		// 设置为接收模式
+		if(NRF24L01_RxPacket(RX_BUF))
+		{
+			LED2=~LED2;
+//			for(i=0;i<10;i++)
+//			{
+//					//等待发送完毕,必须放在前面
+//				while(USART_GetFlagStatus(USART1,USART_FLAG_TC) == RESET);
+//				//发送数据
+//				USART_SendData(USART1,(u8)RX_BUF[i]);	
+//			}
+		}	
+		
+		
+		
+	}
+}
+	
+void TIM1_UP_IRQHandler(void)
+{
+
+    if(TIM == TIM1)
+	{
+	    if(TIM_GetITStatus(TIM, TIM_IT_Update) != RESET)					//判断是否为 更新事件 标志位
+		{
+		    TIM_ClearITPendingBit(TIM, TIM_IT_Update);						//清除 	更新事件 标志
+//            
+            if(UartFlag_RecTime)//从接收第一个有效字节开始,进行一秒的倒计时,如果没收到完整的
+                        //复位接收器,并发送一个字节的报错数据0x88.
+            {
+                if(RecTimeCount>0)
+                    RecTimeCount--;
+                else
+                {
+                    UartRecInit=0;
+                    UartFlag_RecTime=0;//禁止接收倒计时	
+                    Uart_RecOk=1;
+
+                }
+            }
+		
+		}	
+	}
+}
+
+/*******************************************************************************
+* Function Name  : USART1_IRQHandler
+* Description    : This function handles USART1 global interrupt request.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void USART1_IRQHandler(void)
+{
+ 	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
+	{ 
+
+		USART_ClearITPendingBit(USART1, USART_IT_RXNE);
+		if(UartRecInit==0)
+		{
+			UartRecInit=1;
+			RecCnt=0;//接收个数
+			UartFlag_RecTime=1;//允许接收倒计时
+			RecTimeCount=100;//接收倒计时时间,1秒
+			
+		}
+		if(RecCnt<100)	
+			UartRx[RecCnt++]=USART1->DR;
+
+		if(RecCnt>=30)
+
+		{
+			UartRecInit=0;
+			RecTimeCount=100;//防程序偶合,没多大意义
+			UartFlag_RecTime=0;//禁止接收倒计时	
+			Uart_RecOk=1;
+
+		}
+	}   
+}
+
+
+
+

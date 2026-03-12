@@ -1,0 +1,47 @@
+vu16 datw[100];
+vu8 sendwificnt=0;
+void wifi_start(void)
+{
+	sendwificnt=0;
+}
+void wifi_sendnum(vu32 value)
+{
+	if(value>=10000)
+		datw[sendwificnt++]=value/10000+48;
+
+		if(value>=1000)
+		datw[sendwificnt++]=value/1000%10+48;
+			if(value>=100)
+		datw[sendwificnt++]=value/100%10+48;
+				if(value>=10)
+		datw[sendwificnt++]=value/10%10+48;
+						datw[sendwificnt++]=value%10+48;
+				datw[sendwificnt++]=',';
+	
+}
+ 
+void wifi_sendstr(vu8 uart,vu8 *p)
+{
+		while(*p)
+		{
+			datw[sendwificnt++]=*p++;
+		}
+		datw[sendwificnt++]=',';
+    
+}
+
+void wifi_end(vu8 uart)
+{
+	vu8 i;
+sendchar(uart,'S');
+sendchar(uart,sendwificnt/100+48);	
+sendchar(uart,sendwificnt/10%10+48);	
+sendchar(uart,sendwificnt%10+48);		
+	for(i=0;i<sendwificnt;i++)
+{
+sendchar(uart,datw[i];
+}
+	sendchar(uart,'E');
+}
+
+  

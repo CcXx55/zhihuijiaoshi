@@ -1,0 +1,141 @@
+#include "exit.h"
+
+#define RX4 PAin(1)// 串口4的接收脚,记得调用UART4_INIT函数
+#define TX4 PAout(0)
+
+#define RX5 PBin(15)// 串口5的接收脚,记得调用UART5_INIT函数
+#define TX5 PBout(15)
+
+
+
+void UART4_INIT(void)//虚拟串口4
+{
+    set(PA,0,out);//TX4脚
+    set(PA,1,in);//RX4脚
+    Exit_Init(GPIOA, GPIO_Pin_1, GPIO_Mode_IPU,EXTI_Trigger_Falling, 0, 0);//串口4的接收脚
+}
+void UART5_INIT(void)//虚拟串口5
+{
+    set(PA,0,out);//TX5脚
+    set(PA,1,in);//RX5脚
+    Exit_Init(GPIOA, GPIO_Pin_1, GPIO_Mode_IPU,EXTI_Trigger_Falling, 0, 0);//串口5的接收脚
+}
+
+//其他外部中断函数在it.c
+void EXTI0_IRQHandler(void)//因为有可能2个位一直都为低,外部中断肯定不行,只能作为同步信号
+{
+	  TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+    vu16 TIM_COUNTER=1;					 
+    vu16 TIM_PSC=3744;					  //3744就是104us,不能100us,不准
+
+    if (EXTI_GetITStatus(EXTI_Line1) != RESET) // 检查指定的EXTI1线路触发请求发生与否
+    {
+        EXTI_ClearITPendingBit(EXTI_Line1); // 清除EXTI0线路挂起位
+        if (!RX4)//如果接收脚是低
+        {
+
+            if (startrec4==0)//第一次接收
+            {
+
+
+                /* TIM时钟使能 */
+
+                RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
+
+                /* 基定时器初始化 */
+                TIM_TimeBaseStructure.TIM_Period = TIM_COUNTER;				//计数值
+                TIM_TimeBaseStructure.TIM_Prescaler = TIM_PSC;				//分频系数
+                TIM_TimeBaseStructure.TIM_ClockDivision = 0;				//时钟分割：寄存器（技术）手册基定时器未讲到。
+                TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;	//计数模式
+                TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;			//重复计数值
+
+                TIM_TimeBaseInit(TIM, &TIM_TimeBaseStructure);				//初始化TIM
+
+
+                //现在同步时间用DS1302,走时都1302完成,所以,其他方面不用很准,可以经常清零定时器0
+                startrec4 = 1; //启动接收程序
+             //   RecCnt4=0;//这边不能清零,因为字节与字节之间会一直调用
+                RDAT4=0;
+                RBIT4 = 9;	  // 接收数据的位长度为9
+            }
+        }
+
+    }
+}
+
+
+void sendchar4(vu8 b)
+{
+    vu8 i=0;
+    TX4 = 0;  // 拉低发射脚
+    delay_us(104);
+    for(i=0; i<8; i++)
+    {
+        TX4 = b & 1;//一位一位发送
+        b>>= 1; //右移
+        delay_us(104);
+    }
+    TX4 = 1;  // 拉高发射脚
+    delay_us(104);
+    TX4 = 1;  // 拉高发射脚
+    delay_us(104);
+    TX4 = 1;  // 拉高发射脚
+    delay_us(104);
+}
+
+
+void uart_xuni(void)//104us中断一次,因为有外部中断,所以可以100us中断一次,100us也更好,不然都边界读不准
+//字节之间有3个104us高电平填充
+{
+    if(xuni_timeout4)
+    {
+        xuni_timeout4--;
+        if(xuni_timeout4==0)//数据间隔是500ms发送,循环100ms,肯定能在新的一串处理完,所以不必再多写代码,浪费时间
+					Uart_RecOk4=1;
+				
+    }
+    if(xuni_timeout5)
+    {
+        xuni_timeout5--;
+        if(xuni_timeout5==0)//数据间隔是500ms发送,循环100ms,肯定能在新的一串处理完,所以不必再多写代码,浪费时间
+					Uart_RecOk5=1;
+				
+    }		
+    if (startrec4)//这个判断是否有低电平,有自动变高
+    {
+
+
+        RDAT4 >>= 1;//接收是一位位收
+        if (RX4)//如果数据为高,
+            RDAT4 |= 0x80; // 数据位就置位1
+        RBIT4--;
+        if(RBIT4==0)
+        {
+            startrec4= 0; //关闭接收
+            if (RecCnt4 < 100)//吧数据存储缓存区 RDAT4存入数组
+                Uart_Rx4[RecCnt4++] = RDAT4;
+            xuni_timeout4=10*10;//字节10ms超时
+
+        }
+
+    }
+		    if (startrec5)//这个判断是否有低电平,有自动变高
+    {
+
+
+        RDAT5 >>= 1;//接收是一位位收
+        if (RX5)//如果数据为高,
+            RDAT5 |= 0x80; // 数据位就置位1
+        RBIT5--;
+        if(RBIT5==0)
+        {
+            startrec5= 0; //关闭接收
+            if (RecCnt5 < 100)//吧数据存储缓存区 RDAT4存入数组
+                Uart_Rx4[RecCnt5++] = RDAT5;
+            xuni_timeout5=10*10;//字节10ms超时
+
+        }
+
+    }
+}
+

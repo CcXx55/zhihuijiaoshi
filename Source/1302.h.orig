@@ -1,0 +1,54 @@
+vu8 hour=0,min=0,sec=0,year=0,month=0,date=0;
+
+void ds1302(vu8 uart)
+{
+	vu8 *uart1302recok,*uart1302;
+		if (uart == 1)
+	{
+		uart1302recok = &Uart_RecOk1;
+		uart1302= &Uart_Rx1[0];
+	}
+	else
+	{
+
+			uart1302recok = &Uart_RecOk2;
+	uart1302 = &Uart_Rx2[0];
+	}
+
+    if (uart1302recok) // 收到数据,数据会一直发送,定时器不需要走时",
+    {
+        uart1302recok = 0;                  // 清除标志
+        if ((uart1302[0] == 'd') && (uart1302[5] == 'a')) // 在0x66与0x88直接的数据就是真实数据
+        {
+            year=(uart1302[7]-48)*10+(uart1302[8]-48);
+            month=(uart1302[10]-48)*10+(uart1302[11]-48);
+            date=(uart1302[13]-48)*10+(uart1302[14]-48);
+            hour=(uart1302[21]-48)*10+(uart1302[22]-48);
+
+            min=(uart1302[24]-48)*10+(uart1302[25]-48);
+            sec=(uart1302[27]-48)*10+(uart1302[28]-48);
+#if 0
+            LCDW_Com(0x80);
+
+            LCDW_Dat(year/10+48);
+            LCDW_Dat(year%10+48);
+            LCDW_Dat('-');
+            LCDW_Dat(month/10+48);
+            LCDW_Dat(month%10+48);
+            LCDW_Dat('-');
+            LCDW_Dat(date/10+48);
+            LCDW_Dat(date%10+48);
+#endif
+            LCDW_Com(0x80+11);
+            LCDW_Dat(hour/10+48);
+            LCDW_Dat(hour%10+48);
+            if(sec%2)
+                LCDW_Dat(':');
+            else
+                LCDW_Dat(' ');
+            LCDW_Dat(min/10+48);
+            LCDW_Dat(min%10+48);
+        }
+    }
+}
+
