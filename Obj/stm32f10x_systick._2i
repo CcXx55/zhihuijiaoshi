@@ -1,0 +1,6 @@
+-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork -I.\Source\FWLib\inc -I.\Source\FWLib\src -I.\Source\Startup -I.\Source -I..\¡¾A¡¿LEDÑ­»·ÉÁ¶¯ -I..\stm32ÃÜÂëËø
+-I C:\Keil_v5\ARM\RV31\INC
+-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.1.0\CMSIS\Include
+-I C:\Keil_v5\ARM\Inc\ST\STM32F10x
+
+-o .\obj\stm32f10x_systick.o --omf_browse .\obj\stm32f10x_systick.crf --depend .\obj\stm32f10x_systick.d --feedback ".\Obj\GPIO.fed" "Source\FWLib\src\stm32f10x_systick.c"

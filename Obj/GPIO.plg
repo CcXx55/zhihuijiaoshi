@@ -1,0 +1,31 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\admin\Desktop\stm32基本框架 3.28（好用）(1)\stm32基本框架 3.28\stm32基本框架 - 副本\stm32.uvproj
+Project File Date:  03/07/2018
+
+<h2>Output:</h2>
+Build target 'GPIO'
+compiling main.c...
+Source\main.c(149): error:  #167: argument of type "unsigned char" is incompatible with parameter of type "vu8 *"
+Target not created
+Build target 'GPIO'
+compiling main.c...
+Source\main.c(149): error:  #142: expression must have pointer-to-object type
+Target not created
+Build target 'GPIO'
+compiling main.c...
+Source\main.c(149): error:  #142: expression must have pointer-to-object type
+Target not created
+Build target 'GPIO'
+compiling main.c...
+Source\main.c(149): error:  #142: expression must have pointer-to-object type
+Target not created
+Build target 'GPIO'
+compiling main.c...
+linking...
+Program Size: Code=13014 RO-data=382 RW-data=160 ZI-data=3904  
+FromELF: creating hex file...
+".\Obj\GPIO.axf" - 0 Error(s), 0 Warning(s).
